@@ -20,6 +20,7 @@ public func configure(_ app: Application) async throws {
     ), as: .psql)
 
     app.migrations.add(CreateAcronym())
+    app.migrations.add(CreateUser())
 
     // register routes
     try routes(app)

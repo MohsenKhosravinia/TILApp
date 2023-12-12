@@ -1,18 +1,18 @@
 import Fluent
 
-struct CreateAcronym: AsyncMigration {
+struct CreateUser: AsyncMigration {
     func prepare(on database: Database) async throws {
         try await database
-            .schema("acronyms")
+            .schema("users")
             .id()
-            .field("short", .string, .required)
-            .field("long", .string, .required)
+            .field("name", .string, .required)
+            .field("username", .string, .required)
             .create()
     }
-
+    
     func revert(on database: Database) async throws {
         try await database
-            .schema("acronyms")
+            .schema("users")
             .delete()
     }
 }

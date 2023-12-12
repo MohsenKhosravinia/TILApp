@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-final class Todo: Model, Content {
+final class Acronym: Model {
     static let schema = "acronyms"
     
     @ID(key: .id)
@@ -15,9 +15,11 @@ final class Todo: Model, Content {
 
     init() {}
 
-    init(id: UUID?, short: String, long: String) {
+    init(id: UUID? = nil, short: String, long: String) {
         self.id = id
         self.short = short
         self.long = long
     }
 }
+
+extension Acronym: Content {}
