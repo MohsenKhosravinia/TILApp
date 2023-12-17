@@ -3,7 +3,7 @@ import Fluent
 struct CreateAcronym: AsyncMigration {
     func prepare(on database: Database) async throws {
         try await database
-            .schema("acronyms")
+            .schema(Acronym.schema)
             .id()
             .field("short", .string, .required)
             .field("long", .string, .required)
@@ -12,7 +12,7 @@ struct CreateAcronym: AsyncMigration {
 
     func revert(on database: Database) async throws {
         try await database
-            .schema("acronyms")
+            .schema(Acronym.schema)
             .delete()
     }
 }
