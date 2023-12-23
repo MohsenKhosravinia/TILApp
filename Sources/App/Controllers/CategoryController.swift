@@ -2,10 +2,12 @@ import Vapor
 
 struct CategoryController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        let userRoutes = routes.grouped("api", "category")
-        userRoutes.post(use: createHandler)
-        userRoutes.get(use: getAllHandler)
-        userRoutes.get(":categoryID", use: getHandler)
+        let categoriesRoutes = routes.grouped("api", "categories")
+        categoriesRoutes.post(use: createHandler)
+        categoriesRoutes.get(use: getAllHandler)
+        categoriesRoutes.get(":categoryID", use: getHandler)
+        categoriesRoutes.get(":categoryID", "acronyms", use: getAcronymsHandler)
+        categoriesRoutes.delete(":categoryID", use: deleteCategoryHandler)
     }
     
     private func createHandler(_ req: Request) throws -> EventLoopFuture<Category> {
@@ -22,5 +24,23 @@ struct CategoryController: RouteCollection {
         Category
             .find(req.parameters.get("categoryID"), on: req.db)
             .unwrap(or: Abort(.notFound))
+    }
+    
+    private func getAcronymsHandler(_ req: Request) throws -> EventLoopFuture<[Acronym]> {
+        Category
+            .find(req.parameters.get("acronymID"), on: req.db)
+            .unwrap(or: Abort(.notFound))
+            .flatMap { category in
+                category.$acronyms.get(on: req.db)
+            }
+    }
+    
+    private func deleteCategoryHandler(_ req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        Category
+            .find(req.parameters.get("categoryID"), on: req.db)
+            .unwrap(or: Abort(.notFound))
+            .flatMap { category in
+                category.delete(on: req.db).transform(to: .noContent)
+            }
     }
 }

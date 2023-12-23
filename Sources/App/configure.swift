@@ -22,6 +22,7 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(CreateUser())
     app.migrations.add(CreateAcronym())
     app.migrations.add(CreateCategory())
+    app.migrations.add(CreateAcronymCategoryPivot())
 
     // register routes
     try routes(app)

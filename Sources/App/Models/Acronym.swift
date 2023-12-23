@@ -15,6 +15,9 @@ final class Acronym: Model {
     
     @Parent(key: "userID")
     var user: User
+    
+    @Siblings(through: AcronymCategoryPivot.self, from: \.$acronym, to: \.$category)
+    var categories: [Category]
 
     init() {}
 
