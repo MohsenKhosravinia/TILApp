@@ -4,7 +4,7 @@ import Foundation
 final class AcronymCategoryPivot: Model {
     static let schema = "acronym-category-pivot"
     
-    @ID
+    @ID(key: .id)
     var id: UUID?
     
     @Parent(key: "acronymID")

@@ -1,4 +1,5 @@
 import Vapor
+import Fluent
 
 struct CategoryController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
@@ -12,8 +13,19 @@ struct CategoryController: RouteCollection {
     
     private func createHandler(_ req: Request) throws -> EventLoopFuture<Category> {
         let category = try req.content.decode(Category.self)
-        category.id = UUID()
-        return category.save(on: req.db).map { category }
+        
+        return Category.query(on: req.db)
+            .filter(\.$name == category.name)
+            .first()
+            .flatMap { existingCategory in
+                if let existingCategory {
+                    return req.eventLoop.makeSucceededFuture(existingCategory)
+                } else {
+                    category.name = category.name.lowercased()
+                    category.id = UUID()
+                    return category.save(on: req.db).map { category }
+                }
+            }
     }
     
     private func getAllHandler(_ req: Request) throws -> EventLoopFuture<[Category]> {
@@ -28,7 +40,7 @@ struct CategoryController: RouteCollection {
     
     private func getAcronymsHandler(_ req: Request) throws -> EventLoopFuture<[Acronym]> {
         Category
-            .find(req.parameters.get("acronymID"), on: req.db)
+            .find(req.parameters.get("categoryID"), on: req.db)
             .unwrap(or: Abort(.notFound))
             .flatMap { category in
                 category.$acronyms.get(on: req.db)

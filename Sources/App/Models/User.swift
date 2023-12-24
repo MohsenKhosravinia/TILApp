@@ -4,7 +4,7 @@ import Vapor
 final class User: Model {
     static let schema: String = "users"
     
-    @ID
+    @ID(key: .id)
     var id: UUID?
     
     @Field(key: "name")
