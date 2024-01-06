@@ -10,4 +10,7 @@ func routes(_ app: Application) throws {
     
     let categoryController = CategoryController()
     try app.register(collection: categoryController)
+    
+    let websiteController = WebsiteController()
+    try app.register(collection: websiteController)
 }

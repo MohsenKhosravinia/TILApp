@@ -1,6 +1,7 @@
 import NIOSSL
 import Fluent
 import FluentPostgresDriver
+import Leaf
 import Vapor
 
 // configures your application
@@ -28,4 +29,6 @@ public func configure(_ app: Application) async throws {
     try routes(app)
     
     try await app.autoMigrate()
+    
+    app.views.use(.leaf)
 }

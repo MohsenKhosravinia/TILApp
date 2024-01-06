@@ -1,7 +1,7 @@
 import Vapor
 import Fluent
 
-class AcronymController: RouteCollection {
+struct AcronymController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let acronymsRoutes = routes.grouped("api", "acronyms")
         acronymsRoutes.get(use: getAllHandler)
