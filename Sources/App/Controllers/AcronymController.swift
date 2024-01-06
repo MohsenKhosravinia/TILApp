@@ -1,4 +1,5 @@
 import Vapor
+import Fluent
 
 class AcronymController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
@@ -11,6 +12,7 @@ class AcronymController: RouteCollection {
         acronymsRoutes.get(":acronymID", "user", use: getUserHandler)
         acronymsRoutes.get(":acronymID", "categories", use: getCategoriesHandler)
         acronymsRoutes.post(":acronymID", "categories", ":categoryID", use: addCategoriesHandler)
+        acronymsRoutes.get("search", use: searchHandler)
     }
     
     private func getAllHandler(_ req: Request) throws -> EventLoopFuture<[Acronym]> {
@@ -90,6 +92,17 @@ class AcronymController: RouteCollection {
         return acronymQuery.and(categoryQuery).flatMap { acronym, category in
             acronym.$categories.attach(category, on: req.db).transform(to: .created)
         }
+    }
+    
+    private func searchHandler(_ req: Request) throws -> EventLoopFuture<[Acronym]> {
+        guard let searchTerm = req.query[String.self, at: "term"] else {
+            throw Abort(.badRequest)
+        }
+        
+        return Acronym.query(on: req.db).group(.or) { or in
+            or.filter(\.$short == searchTerm)
+            or.filter(\.$long == searchTerm)
+        }.all()
     }
 }
 
