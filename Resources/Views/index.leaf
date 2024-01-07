@@ -1,5 +1,7 @@
 #extend("base"):
     #export("content"):
+        <img src="/images/logo.png" height="200" class="max-auto d-block">
+
         <h1>Acronyms</h1>
 
         #extend("acronymsTable")
